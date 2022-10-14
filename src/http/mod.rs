@@ -92,8 +92,7 @@ pub async fn serve(config: Config, db: PgPool) -> anyhow::Result<()> {
 
 fn api_router(api_context: ApiContext) -> Router<ApiContext> {
     // This is the order that the modules were authored in.
-    Router::with_state(api_context)
-        .merge(users::router())
-        .merge(profiles::router())
-        .merge(articles::router())
+    users::router(api_context.clone())
+        .merge(profiles::router(api_context.clone()))
+        .merge(articles::router(api_context))
 }

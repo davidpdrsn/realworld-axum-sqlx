@@ -13,11 +13,11 @@ use crate::http::{ApiContext, Error, Result, ResultExt};
 mod comments;
 mod listing;
 
-pub(crate) fn router() -> Router<ApiContext> {
+pub(crate) fn router(api_context: ApiContext) -> Router<ApiContext> {
     // I would prefer `listing` to have its own `router()` method and keep the handler
     // functions private, however that doesn't really work here as we need to list all the
     // verbs under the same path exactly once.
-    Router::inherit_state()
+    Router::with_state(api_context.clone())
         .route(
             "/api/articles",
             post(create_article).get(listing::list_articles),
@@ -35,7 +35,7 @@ pub(crate) fn router() -> Router<ApiContext> {
         // This route isn't technically grouped with articles but it makes sense to include it
         // here since it touches the `article` table.
         .route("/api/tags", get(get_tags))
-        .merge(comments::router())
+        .merge(comments::router(api_context))
 }
 
 #[derive(serde::Deserialize, serde::Serialize)]

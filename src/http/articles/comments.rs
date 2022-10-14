@@ -9,9 +9,9 @@ use axum::{Json, Router};
 use futures::TryStreamExt;
 use time::OffsetDateTime;
 
-pub(crate) fn router() -> Router<ApiContext> {
+pub(crate) fn router(api_context: ApiContext) -> Router<ApiContext> {
     // Unlike those in `listing`, these routes are fortunately all self-contained
-    Router::inherit_state()
+    Router::with_state(api_context)
         .route(
             "/api/articles/:slug/comments",
             get(get_article_comments).post(add_comment),

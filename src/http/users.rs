@@ -9,10 +9,10 @@ use axum::{Json, Router};
 use crate::http::error::{Error, ResultExt};
 use crate::http::extractor::AuthUser;
 
-pub(crate) fn router() -> Router<ApiContext> {
+pub(crate) fn router(api_context: ApiContext) -> Router<ApiContext> {
     // By having each module responsible for setting up its own routing,
     // it makes the root module a lot cleaner.
-    Router::inherit_state()
+    Router::with_state(api_context)
         .route("/api/users", post(create_user))
         .route("/api/users/login", post(login_user))
         .route("/api/user", get(get_current_user).put(update_user))

@@ -9,8 +9,8 @@ use axum::{Json, Router};
 // The `profiles` routes are very similar to the `users` routes, except they allow looking up
 // other users' data.
 
-pub(crate) fn router() -> Router<ApiContext> {
-    Router::inherit_state()
+pub(crate) fn router(api_context: ApiContext) -> Router<ApiContext> {
+    Router::with_state(api_context)
         .route("/api/profiles/:username", get(get_user_profile))
         .route(
             "/api/profiles/:username/follow",
