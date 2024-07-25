@@ -1,0 +1,65 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            select\n                comment_id,\n                comment.created_at,\n                comment.updated_at,\n                comment.body,\n                author.username author_username,\n                author.bio author_bio,\n                author.image author_image,\n                exists(select 1 from follow where followed_user_id = author.user_id and following_user_id = $1) \"following_author!\"\n            from article_comment comment\n            inner join \"user\" author using (user_id)\n            where article_id = $2\n            order by created_at\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "comment_id",
+        "type_info": "Int8"
+      },
+      {
+        "ordinal": 1,
+        "name": "created_at",
+        "type_info": "Timestamptz"
+      },
+      {
+        "ordinal": 2,
+        "name": "updated_at",
+        "type_info": "Timestamptz"
+      },
+      {
+        "ordinal": 3,
+        "name": "body",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 4,
+        "name": "author_username",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 5,
+        "name": "author_bio",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 6,
+        "name": "author_image",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 7,
+        "name": "following_author!",
+        "type_info": "Bool"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Uuid",
+        "Uuid"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      true,
+      null
+    ]
+  },
+  "hash": "6de1ca09b3b33c607478ea985271d32a6dc5927f7465bc3552df1d8f57ecd137"
+}

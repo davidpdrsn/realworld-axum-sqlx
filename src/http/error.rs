@@ -31,7 +31,7 @@ pub enum Error {
     ///
     /// This also serializes the `errors` map to JSON to satisfy the requirement for
     /// `422 Unprocessable Entity` errors in the Realworld spec:
-    /// https://realworld-docs.netlify.app/docs/specs/backend-specs/error-handling
+    /// <https://realworld-docs.netlify.app/docs/specs/backend-specs/error-handling>
     ///
     /// For a good API, the other status codes should also ideally map to some sort of JSON body
     /// that the frontend can deal with, but I do admit sometimes I've just gotten lazy and

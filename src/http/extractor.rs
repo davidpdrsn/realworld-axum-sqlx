@@ -6,7 +6,7 @@ use crate::http::ApiContext;
 use async_trait::async_trait;
 use axum::http::header::AUTHORIZATION;
 use axum::http::HeaderValue;
-use hmac::{Hmac, NewMac};
+use hmac::{Hmac, Mac};
 use jwt::{SignWithKey, VerifyWithKey};
 use sha2::Sha384;
 use time::OffsetDateTime;

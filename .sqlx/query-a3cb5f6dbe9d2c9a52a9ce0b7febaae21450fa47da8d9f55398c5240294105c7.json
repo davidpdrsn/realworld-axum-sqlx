@@ -1,0 +1,30 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            with deleted_comment as (\n                delete from article_comment\n                where \n                    comment_id = $1\n                    and article_id in (select article_id from article where slug = $2)\n                    and user_id = $3\n                returning 1 \n            )\n            select \n                exists(\n                    select 1 from article_comment\n                    inner join article using (article_id)\n                    where comment_id = $1 and slug = $2\n                ) \"existed!\",\n                exists(select 1 from deleted_comment) \"deleted!\"\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "existed!",
+        "type_info": "Bool"
+      },
+      {
+        "ordinal": 1,
+        "name": "deleted!",
+        "type_info": "Bool"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Text",
+        "Uuid"
+      ]
+    },
+    "nullable": [
+      null,
+      null
+    ]
+  },
+  "hash": "a3cb5f6dbe9d2c9a52a9ce0b7febaae21450fa47da8d9f55398c5240294105c7"
+}
