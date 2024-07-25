@@ -1,0 +1,96 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            select\n                slug,\n                title,\n                description,\n                body,\n                tag_list,\n                article.created_at \"created_at: Timestamptz\",\n                article.updated_at \"updated_at: Timestamptz\",\n                exists(select 1 from article_favorite where user_id = $1) \"favorited!\",\n                coalesce(\n                    (select count(*) from article_favorite fav where fav.article_id = article.article_id),\n                    0\n                ) \"favorites_count!\",\n                author.username author_username,\n                author.bio author_bio,\n                author.image author_image,\n                -- we wouldn't be returning this otherwise\n                true \"following_author!\"\n            from follow\n            inner join article on followed_user_id = article.user_id\n            inner join \"user\" author using (user_id)\n            where following_user_id = $1\n            limit $2\n            offset $3\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "slug",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 1,
+        "name": "title",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 2,
+        "name": "description",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 3,
+        "name": "body",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 4,
+        "name": "tag_list",
+        "type_info": "TextArray"
+      },
+      {
+        "ordinal": 5,
+        "name": "created_at: Timestamptz",
+        "type_info": "Timestamptz"
+      },
+      {
+        "ordinal": 6,
+        "name": "updated_at: Timestamptz",
+        "type_info": "Timestamptz"
+      },
+      {
+        "ordinal": 7,
+        "name": "favorited!",
+        "type_info": "Bool"
+      },
+      {
+        "ordinal": 8,
+        "name": "favorites_count!",
+        "type_info": "Int8"
+      },
+      {
+        "ordinal": 9,
+        "name": "author_username",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 10,
+        "name": "author_bio",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 11,
+        "name": "author_image",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 12,
+        "name": "following_author!",
+        "type_info": "Bool"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Uuid",
+        "Int8",
+        "Int8"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      null,
+      null,
+      false,
+      false,
+      true,
+      null
+    ]
+  },
+  "hash": "76f0caee6879f31d122e26cbd3c7772b640780c498eab1eb6d896ab630f5855c"
+}

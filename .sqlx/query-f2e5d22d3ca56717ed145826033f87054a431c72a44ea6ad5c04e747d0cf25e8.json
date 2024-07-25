@@ -1,0 +1,99 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            with inserted_article as (\n                insert into article (user_id, slug, title, description, body, tag_list)\n                values ($1, $2, $3, $4, $5, $6)\n                returning \n                    slug, \n                    title, \n                    description, \n                    body, \n                    tag_list, \n                    -- This is how you can override the inferred type of a column.\n                    created_at \"created_at: Timestamptz\", \n                    updated_at \"updated_at: Timestamptz\"\n            )\n            select \n                inserted_article.*,\n                false \"favorited!\",\n                0::int8 \"favorites_count!\",\n                username author_username,\n                bio author_bio,\n                image author_image,\n                -- user is forbidden to follow themselves\n                false \"following_author!\"\n            from inserted_article\n            inner join \"user\" on user_id = $1\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "slug",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 1,
+        "name": "title",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 2,
+        "name": "description",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 3,
+        "name": "body",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 4,
+        "name": "tag_list",
+        "type_info": "TextArray"
+      },
+      {
+        "ordinal": 5,
+        "name": "created_at: Timestamptz",
+        "type_info": "Timestamptz"
+      },
+      {
+        "ordinal": 6,
+        "name": "updated_at: Timestamptz",
+        "type_info": "Timestamptz"
+      },
+      {
+        "ordinal": 7,
+        "name": "favorited!",
+        "type_info": "Bool"
+      },
+      {
+        "ordinal": 8,
+        "name": "favorites_count!",
+        "type_info": "Int8"
+      },
+      {
+        "ordinal": 9,
+        "name": "author_username",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 10,
+        "name": "author_bio",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 11,
+        "name": "author_image",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 12,
+        "name": "following_author!",
+        "type_info": "Bool"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Uuid",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "TextArray"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      null,
+      null,
+      false,
+      false,
+      true,
+      null
+    ]
+  },
+  "hash": "f2e5d22d3ca56717ed145826033f87054a431c72a44ea6ad5c04e747d0cf25e8"
+}

@@ -1,0 +1,29 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            -- The main query cannot observe side-effects of data-modifying CTEs and \n            -- by design, always sees the \"before\" picture of the database,\n            -- so this lets us fold our permissions check together with the actual delete.\n            --\n            -- This was the \"being too clever\" I was talking about before. However, I think it's\n            -- permissible here as we're not pairing this together with a huge select, so it\n            -- should be relatively easy to understand the intended effect here.\n            with deleted_article as (\n                delete from article \n                -- Important: we only delete the article if the user actually authored it.\n                where slug = $1 and user_id = $2\n                -- We just need to return *something* for `exists()` below.\n                returning 1\n            )\n            select\n                -- This will be `true` if the article existed before we deleted it.\n                exists(select 1 from article where slug = $1) \"existed!\",\n                -- This will only be `true` if we actually deleted the article.\n                exists(select 1 from deleted_article) \"deleted!\"\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "existed!",
+        "type_info": "Bool"
+      },
+      {
+        "ordinal": 1,
+        "name": "deleted!",
+        "type_info": "Bool"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Text",
+        "Uuid"
+      ]
+    },
+    "nullable": [
+      null,
+      null
+    ]
+  },
+  "hash": "be21ab3ab1274146fdd7d754ce47d6fdbbaf5366c5b68b679f754d4d337e5379"
+}

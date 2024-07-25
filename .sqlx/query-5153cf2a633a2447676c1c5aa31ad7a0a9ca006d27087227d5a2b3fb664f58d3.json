@@ -1,0 +1,20 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            select distinct tag \"tag!\"\n            from article, unnest (article.tag_list) tags(tag)\n            order by tag\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "tag!",
+        "type_info": "Text"
+      }
+    ],
+    "parameters": {
+      "Left": []
+    },
+    "nullable": [
+      null
+    ]
+  },
+  "hash": "5153cf2a633a2447676c1c5aa31ad7a0a9ca006d27087227d5a2b3fb664f58d3"
+}

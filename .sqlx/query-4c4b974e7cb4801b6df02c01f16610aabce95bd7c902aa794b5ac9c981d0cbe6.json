@@ -1,0 +1,28 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "select article_id, user_id from article where slug = $1 for update",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "article_id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 1,
+        "name": "user_id",
+        "type_info": "Uuid"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Text"
+      ]
+    },
+    "nullable": [
+      false,
+      false
+    ]
+  },
+  "hash": "4c4b974e7cb4801b6df02c01f16610aabce95bd7c902aa794b5ac9c981d0cbe6"
+}

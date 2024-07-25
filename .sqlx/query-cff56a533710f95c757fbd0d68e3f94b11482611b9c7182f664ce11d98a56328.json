@@ -1,0 +1,99 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            with updated_article as (\n                update article\n                set\n                    slug = coalesce($1, slug),\n                    title = coalesce($2, title),\n                    description = coalesce($3, description),\n                    body = coalesce($4, body)\n                where article_id = $5\n                returning\n                    slug,\n                    title,\n                    description,\n                    body,\n                    tag_list,\n                    article.created_at \"created_at: Timestamptz\",\n                    article.updated_at \"updated_at: Timestamptz\"\n            )\n            select\n                updated_article.*,\n                exists(select 1 from article_favorite where user_id = $6) \"favorited!\",\n                coalesce(\n                    (select count(*) from article_favorite fav where fav.article_id = $5),\n                    0\n                ) \"favorites_count!\",\n                author.username author_username,\n                author.bio author_bio,\n                author.image author_image,\n                -- user not allowed to follow themselves\n                false \"following_author!\"\n            from updated_article\n            -- we've ensured the current user is the article's author so we can assume it here\n            inner join \"user\" author on author.user_id = $6\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "slug",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 1,
+        "name": "title",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 2,
+        "name": "description",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 3,
+        "name": "body",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 4,
+        "name": "tag_list",
+        "type_info": "TextArray"
+      },
+      {
+        "ordinal": 5,
+        "name": "created_at: Timestamptz",
+        "type_info": "Timestamptz"
+      },
+      {
+        "ordinal": 6,
+        "name": "updated_at: Timestamptz",
+        "type_info": "Timestamptz"
+      },
+      {
+        "ordinal": 7,
+        "name": "favorited!",
+        "type_info": "Bool"
+      },
+      {
+        "ordinal": 8,
+        "name": "favorites_count!",
+        "type_info": "Int8"
+      },
+      {
+        "ordinal": 9,
+        "name": "author_username",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 10,
+        "name": "author_bio",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 11,
+        "name": "author_image",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 12,
+        "name": "following_author!",
+        "type_info": "Bool"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Uuid",
+        "Uuid"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      null,
+      null,
+      false,
+      false,
+      true,
+      null
+    ]
+  },
+  "hash": "cff56a533710f95c757fbd0d68e3f94b11482611b9c7182f664ce11d98a56328"
+}

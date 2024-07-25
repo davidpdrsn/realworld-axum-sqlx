@@ -1,0 +1,66 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            with inserted_comment as (\n                insert into article_comment(article_id, user_id, body)\n                select article_id, $1, $2\n                from article\n                where slug = $3\n                returning comment_id, created_at, updated_at, body\n            )\n            select\n                comment_id,\n                comment.created_at,\n                comment.updated_at,\n                body,\n                author.username author_username,\n                author.bio author_bio,\n                author.image author_image,\n                false \"following_author!\"\n            from inserted_comment comment\n            inner join \"user\" author on user_id = $1\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "comment_id",
+        "type_info": "Int8"
+      },
+      {
+        "ordinal": 1,
+        "name": "created_at",
+        "type_info": "Timestamptz"
+      },
+      {
+        "ordinal": 2,
+        "name": "updated_at",
+        "type_info": "Timestamptz"
+      },
+      {
+        "ordinal": 3,
+        "name": "body",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 4,
+        "name": "author_username",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 5,
+        "name": "author_bio",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 6,
+        "name": "author_image",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 7,
+        "name": "following_author!",
+        "type_info": "Bool"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Uuid",
+        "Text",
+        "Text"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      true,
+      null
+    ]
+  },
+  "hash": "bb17e5051425162a4310778a1f846112f5228c31aa594200afc4f09dd9c3545b"
+}

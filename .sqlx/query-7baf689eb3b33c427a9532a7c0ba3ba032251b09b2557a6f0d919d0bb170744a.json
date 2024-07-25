@@ -1,0 +1,99 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            select\n                slug,\n                title,\n                description,\n                body,\n                tag_list,\n                article.created_at \"created_at: Timestamptz\",\n                article.updated_at \"updated_at: Timestamptz\",\n                exists(select 1 from article_favorite where user_id = $1) \"favorited!\",\n                coalesce(\n                    -- `count(*)` returns `NULL` if the query returned zero columns\n                    -- not exactly a fan of that design choice but whatever\n                    (select count(*) from article_favorite fav where fav.article_id = article.article_id),\n                    0\n                ) \"favorites_count!\",\n                author.username author_username,\n                author.bio author_bio,\n                author.image author_image,\n                exists(select 1 from follow where followed_user_id = author.user_id and following_user_id = $1) \"following_author!\"\n            from article\n            inner join \"user\" author using (user_id)\n            -- the current way to do conditional filtering in SQLx\n            where (\n                -- check if `query.tag` is null or contains the given tag\n                -- PostgresSQL doesn't have an \"array contains element\" operator\n                -- so instead we check if the tag_list contains an array of just the given tag\n                $2::text is null or tag_list @> array[$2]\n            )\n              and\n            (\n                $3::text is null or author.username = $3\n            )\n              and\n            (\n                $4::text is null or exists(\n                    select 1\n                    from \"user\"\n                    inner join article_favorite af using (user_id)\n                    where username = $4\n                )\n            )\n            order by article.created_at desc\n            limit $5\n            offset $6\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "slug",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 1,
+        "name": "title",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 2,
+        "name": "description",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 3,
+        "name": "body",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 4,
+        "name": "tag_list",
+        "type_info": "TextArray"
+      },
+      {
+        "ordinal": 5,
+        "name": "created_at: Timestamptz",
+        "type_info": "Timestamptz"
+      },
+      {
+        "ordinal": 6,
+        "name": "updated_at: Timestamptz",
+        "type_info": "Timestamptz"
+      },
+      {
+        "ordinal": 7,
+        "name": "favorited!",
+        "type_info": "Bool"
+      },
+      {
+        "ordinal": 8,
+        "name": "favorites_count!",
+        "type_info": "Int8"
+      },
+      {
+        "ordinal": 9,
+        "name": "author_username",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 10,
+        "name": "author_bio",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 11,
+        "name": "author_image",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 12,
+        "name": "following_author!",
+        "type_info": "Bool"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Uuid",
+        "Text",
+        "Text",
+        "Text",
+        "Int8",
+        "Int8"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      null,
+      null,
+      false,
+      false,
+      true,
+      null
+    ]
+  },
+  "hash": "7baf689eb3b33c427a9532a7c0ba3ba032251b09b2557a6f0d919d0bb170744a"
+}

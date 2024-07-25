@@ -15,7 +15,7 @@ authors = [
 futures = "0.3"
 tokio = { version = "1.14.0", features = ["macros", "rt-multi-thread", "signal"] }
 axum = { version = "0.7.3", features = ["tower-log"] }
-sqlx = { version = "0.7", features = ["runtime-tokio-native-tls", "postgres", "uuid", "time"] }
+sqlx = { version = "0.8", features = ["runtime-tokio-native-tls", "postgres", "uuid", "time"] }
 
 # The `clap` beta gives us a much nicer way to define configuration parameters for our application.
 clap = { version = "4.0.0", features = ["derive", "env"] }
@@ -35,9 +35,9 @@ tower-http = { version = "0.5.0", features = [
     "trace",
 ] }
 
-jwt = "0.15.0"
-hmac = "0.11.0"
-sha2 = "0.9.8"
+jwt = "0.16.0"
+hmac = "0.12.1"
+sha2 = "0.10.8"
 
 time = "0.3.30"
 
@@ -47,8 +47,8 @@ uuid = { version = "1.0", features = ["serde"] }
 anyhow = "1.0.48"
 async-trait = "0.1.51"
 dotenv = "0.15.0"
-env_logger = "0.10.0"
-itertools = "0.12"
+env_logger = "0.11.4"
+itertools = "0.13"
 log = "0.4.14"
 rand = "0.8.4"
 thiserror = "1.0.30"
